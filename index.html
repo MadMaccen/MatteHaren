@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matte Haren</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, #0d0a1a 0%, #1a1030 50%, #0a0d1f 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        /* Subtle sparkle stars in background */
+        body::before {
+            content: '✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧';
+            position: fixed;
+            top: 10px;
+            left: 0; right: 0;
+            text-align: center;
+            color: rgba(212, 175, 55, 0.15);
+            font-size: 1.2em;
+            letter-spacing: 8px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(160deg, #faf8f2 0%, #f2eee4 100%);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(212,175,55,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+            border: 3px solid #c9a227;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Gold corner ornaments */
+        .container::before, .container::after {
+            content: '✦';
+            position: absolute;
+            font-size: 1.4em;
+            color: #c9a227;
+            opacity: 0.6;
+        }
+        .container::before { top: 12px; left: 16px; }
+        .container::after  { top: 12px; right: 16px; }
+
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 36px; }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: #1e0a3c;
+            text-align: center;
+            margin-bottom: 4px;
+            font-size: 2em;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 0 rgba(201,162,39,0.4), 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .troll-subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #5a3e8a;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        @media (min-width: 768px) {
+            h1 { font-size: 3.2em; margin-bottom: 6px; }
+            .troll-subtitle { font-size: 1.4em; margin-bottom: 30px; }
+        }
+
+        /* Decorative divider */
+        .divider {
+            text-align: center;
+            color: #c9a227;
+            font-size: 1em;
+            letter-spacing: 12px;
+            margin: 12px 0;
+            opacity: 0.7;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a1550 0%, #3d1f70 100%);
+            border-radius: 14px;
+            border: 2px solid #c9a227;
+            box-shadow: 0 4px 16px rgba(30,10,60,0.3), inset 0 1px 0 rgba(212,175,55,0.2);
+        }
+
+        @media (min-width: 768px) {
+            .controls { gap: 15px; margin-bottom: 20px; padding: 18px; }
+        }
+
+        .button {
+            padding: 10px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-weight: 700;
+            font-family: 'Lato', sans-serif;
+            letter-spacing: 0.3px;
+            flex: 1 1 auto;
+            min-width: 120px;
+        }
+
+        @media (min-width: 768px) {
+            .button { padding: 12px 26px; font-size: 15px; flex: 0 1 auto; min-width: auto; }
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #c9a227 0%, #e8c84a 50%, #c9a227 100%);
+            color: #1e0a3c;
+            border: 2px solid #a07c10;
+            box-shadow: 0 3px 10px rgba(201,162,39,0.4);
+        }
+
+        .button-primary:hover {
+            background: linear-gradient(135deg, #e8c84a 0%, #f5d860 50%, #e8c84a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(201,162,39,0.5);
+        }
+
+        .button-success {
+            background: linear-gradient(135deg, #2d7a4f 0%, #3da066 100%);
+            color: #f0faf4;
+            border: 2px solid #1e5c38;
+            box-shadow: 0 3px 10px rgba(45,122,79,0.4);
+        }
+
+        .button-success:hover {
+            background: linear-gradient(135deg, #3da066 0%, #4db87a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(45,122,79,0.5);
+        }
+
+        .button-secondary {
+            background: linear-gradient(135deg, #6b3fa0 0%, #8b5ec4 100%);
+            color: #f5f0ff;
+            border: 2px solid #4a2880;
+            box-shadow: 0 3px 10px rgba(107,63,160,0.4);
+        }
+
+        .button-secondary:hover {
+            background: linear-gradient(135deg, #8b5ec4 0%, #a87de0 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(107,63,160,0.5);
+        }
+
+        .settings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .settings label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 7px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(201,162,39,0.4);
+            color: #f0e8ff;
+            transition: background 0.2s, border-color 0.2s;
+            font-weight: 700;
+        }
+
+        @media (min-width: 768px) {
+            .settings label { gap: 8px; font-size: 15px; padding: 8px 16px; }
+        }
+
+        .settings label:hover {
+            background: rgba(201,162,39,0.2);
+            border-color: #c9a227;
+        }
+
+        .settings input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #c9a227;
+        }
+
+        .problems-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        @media (min-width: 480px) {
+            .problems-container { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+        }
+
+        @media (min-width: 768px) {
+            .problems-container { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; margin-top: 20px; }
+        }
+
+        .problem {
+            padding: 15px;
+            background: linear-gradient(145deg, #ffffff 0%, #f0eaf8 100%);
+            border-radius: 14px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e0a3c;
+            border: 2px solid #c9a227;
+            transition: all 0.25s;
+            box-shadow: 0 3px 10px rgba(30,10,60,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .problem { padding: 20px; font-size: 24px; }
+        }
+
+        .problem:hover {
+            border-color: #a07c10;
+            transform: scale(1.04);
+            box-shadow: 0 8px 24px rgba(201,162,39,0.25);
+        }
+
+        .problem.line-format {
+            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .line-equation {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .problem.line-format { font-size: 24px; }
+            .line-equation { gap: 8px; }
+        }
+
+        .answer-input {
+            width: 60px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid #c9a227;
+            border-radius: 8px;
+            padding: 2px 4px;
+            outline: none;
+            background: #fffef8;
+            color: #1e0a3c;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: textfield;
+        }
+
+        .answer-input::-webkit-outer-spin-button,
+        .answer-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+        .answer-input:focus {
+            border-color: #6b3fa0;
+            box-shadow: 0 0 0 3px rgba(107,63,160,0.2);
+        }
+
+        .answer-input.correct {
+            border-color: #2d7a4f;
+            background: #f0faf4;
+            color: #1e5c38;
+        }
+
+        .answer-input.wrong {
+            border-color: #c53030;
+            background: #fff5f5;
+            color: #9b1c1c;
+        }
+
+        .correct-answer-hint {
+            font-size: 13px;
+            color: #2d7a4f;
+            font-weight: bold;
+        }
+
+        @media (min-width: 768px) {
+            .answer-input { width: 70px; font-size: 22px; }
+        }
+
+        .problem.correct-border {
+            border-color: #2d7a4f;
+            background: linear-gradient(145deg, #f0faf4 0%, #e6f7ed 100%);
+        }
+
+        .problem.wrong-border {
+            border-color: #c53030;
+            background: linear-gradient(145deg, #fff5f5 0%, #ffe8e8 100%);
+        }
+
+        .score-banner {
+            text-align: center;
+            padding: 18px;
+            border-radius: 14px;
+            font-size: 1.3em;
+            font-weight: bold;
+            font-family: 'Playfair Display', serif;
+            margin-top: 20px;
+            display: none;
+            letter-spacing: 0.3px;
+        }
+
+        .score-banner.show { display: block; }
+
+        .score-banner.great {
+            background: linear-gradient(135deg, #f0faf4, #e0f5e8);
+            color: #1e5c38;
+            border: 2px solid #2d7a4f;
+            box-shadow: 0 4px 16px rgba(45,122,79,0.2);
+        }
+
+        .score-banner.ok {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            color: #92400e;
+            border: 2px solid #d97706;
+            box-shadow: 0 4px 16px rgba(217,119,6,0.2);
+        }
+
+        .score-banner.poor {
+            background: linear-gradient(135deg, #fff5f5, #fee2e2);
+            color: #991b1b;
+            border: 2px solid #c53030;
+            box-shadow: 0 4px 16px rgba(197,48,48,0.2);
+        }
+
+        .problem.vertical-format {
+            background: linear-gradient(145deg, #ffffff 0%, #f0eaf8 100%);
+            border: 2px solid #c9a227;
+            border-radius: 14px;
+            padding: 15px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 3px 10px rgba(30,10,60,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .problem.vertical-format { padding: 20px; min-height: 150px; }
+        }
+
+        .vertical-row {
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1.4;
+            text-align: right;
+            width: 100%;
+            color: #1e0a3c;
+        }
+
+        @media (min-width: 768px) {
+            .vertical-row { font-size: 32px; }
+        }
+
+        .vertical-top { padding-right: 10px; }
+
+        .vertical-operation {
+            padding-right: 10px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .vertical-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c9a227, transparent);
+            margin: 8px 0;
+        }
+
+        .vertical-answer {
+            padding-right: 10px;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        @media (min-width: 768px) {
+            .vertical-answer { min-height: 45px; }
+        }
+
+        .info {
+            text-align: center;
+            margin-top: 20px;
+            color: #7a5fa0;
+            font-style: italic;
+        }
+
+        @media (max-width: 479px) {
+            .problems-container { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; margin-bottom:5px;">
+
+            <img src="matteharen.png" alt="Matte haren" style="height:145px; width:auto; border-radius:16px; box-shadow: 0 6px 24px rgba(201,162,39,0.35), 0 0 0 3px #c9a227;">
+
+            <!-- Title -->
+            <div style="text-align:center;">
+                <h1>Matte Haren</h1>
+                <div class="troll-subtitle">✨ Velkommen, lille matteekspert! 🐇</div>
+                <div class="divider">— ✦ —</div>
+            </div>
+
+            <img src="matteharen.png" alt="Matte haren" style="height:145px; width:auto; border-radius:16px; box-shadow: 0 6px 24px rgba(201,162,39,0.35), 0 0 0 3px #c9a227; transform:scaleX(-1);">
+
+        </div>
+
+
+        <div style="text-align:center; margin-bottom: 20px; display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center;">
+            <input type="text" id="playerName" placeholder="Skriv navnet ditt her..." maxlength="30"
+                style="font-size: 1.1em; padding: 10px 16px; border: 2px solid #c9a227; border-radius: 10px; outline: none; text-align: center; width: 100%; max-width: 280px; transition: border-color 0.2s, box-shadow 0.2s; background: #fffef8; color: #1e0a3c; font-family: 'Lato', sans-serif;"
+                onfocus="this.style.borderColor='#6b3fa0'; this.style.boxShadow='0 0 0 3px rgba(107,63,160,0.2)'" onblur="this.style.borderColor='#c9a227'; this.style.boxShadow='none'">
+            <select id="ageSelect" onchange="generateProblems()"
+                style="font-size: 1.1em; padding: 10px 16px; border: 2px solid #c9a227; border-radius: 10px; outline: none; cursor: pointer; background: #fffef8; color: #1e0a3c; transition: border-color 0.2s, box-shadow 0.2s; font-family: 'Lato', sans-serif;"
+                onfocus="this.style.borderColor='#6b3fa0'; this.style.boxShadow='0 0 0 3px rgba(107,63,160,0.2)'" onblur="this.style.borderColor='#c9a227'; this.style.boxShadow='none'">
+                <option value="5">5 år</option>
+                <option value="6">6 år</option>
+                <option value="7">7 år</option>
+                <option value="8">8 år</option>
+                <option value="9">9 år</option>
+                <option value="10" selected>10 år</option>
+                <option value="11">11 år</option>
+                <option value="12">12 år</option>
+                <option value="13">13 år</option>
+                <option value="14">14 år</option>
+                <option value="15">15 år</option>
+            </select>
+        </div>
+
+        <div class="controls">
+            <button class="button button-primary" onclick="toggleFormat()">
+                📝 Bytt format
+            </button>
+            <button class="button button-secondary" onclick="generateProblems()">
+                🎲 Nye oppgaver
+            </button>
+            <button class="button button-success" onclick="checkAnswers()">
+                👁️ FASIT
+            </button>
+        </div>
+
+        <div class="controls">
+            <div class="settings">
+                <label>
+                    <input type="checkbox" id="addition" checked onchange="generateProblems()">
+                    ➕ Addisjon
+                </label>
+                <label>
+                    <input type="checkbox" id="subtraction" checked onchange="generateProblems()">
+                    ➖ Subtraksjon
+                </label>
+                <label>
+                    <input type="checkbox" id="multiplication" onchange="generateProblems()">
+                    ✖️ Multiplikasjon
+                </label>
+                <label>
+                    <input type="checkbox" id="division" onchange="generateProblems()">
+                    ➗ Divisjon
+                </label>
+            </div>
+        </div>
+
+        <div class="problems-container" id="problemsContainer"></div>
+
+        <div class="score-banner" id="scoreBanner"></div>
+
+        <div class="info">
+            <p>Klikk på "Nye oppgaver" for å få nye regnestykker!</p>
+        </div>
+
+        <div style="text-align:center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #c9a227;">
+            <p style="color: #7a5fa0; font-size: 0.85em; margin-bottom: 8px; font-style: italic; letter-spacing: 0.5px;">🐇 Besøkende harer</p>
+            <img src="https://hits.sh/matteharen.no.svg?style=for-the-badge&label=Bes%C3%B8kende&color=3d1f70&labelColor=c9a227" alt="Besøkende" />
+        </div>
+    </div>
+
+    <script>
+        let isLineFormat = true;
+        let problems = [];
+        let checked = false;
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getEnabledOperations() {
+            const operations = [];
+            if (document.getElementById('addition').checked) operations.push('addition');
+            if (document.getElementById('subtraction').checked) operations.push('subtraction');
+            if (document.getElementById('multiplication').checked) operations.push('multiplication');
+            if (document.getElementById('division').checked) operations.push('division');
+            return operations.length > 0 ? operations : ['addition'];
+        }
+
+        function getDifficultyByAge() {
+            const age = parseInt(document.getElementById('ageSelect').value);
+            // Returns { addMax, subMax, mulMax, divMax }
+            if (age <= 5)  return { addMax: 5,    subMax: 5,    mulMax: 2,  divMax: 2  };
+            if (age === 6) return { addMax: 10,   subMax: 10,   mulMax: 3,  divMax: 3  };
+            if (age === 7) return { addMax: 20,   subMax: 15,   mulMax: 5,  divMax: 5  };
+            if (age === 8) return { addMax: 30,   subMax: 20,   mulMax: 7,  divMax: 7  };
+            if (age === 9) return { addMax: 50,   subMax: 40,   mulMax: 9,  divMax: 9  };
+            if (age === 10)return { addMax: 100,  subMax: 50,   mulMax: 10, divMax: 10 };
+            if (age === 11)return { addMax: 150,  subMax: 100,  mulMax: 12, divMax: 12 };
+            if (age === 12)return { addMax: 200,  subMax: 150,  mulMax: 15, divMax: 15 };
+            if (age === 13)return { addMax: 500,  subMax: 300,  mulMax: 20, divMax: 20 };
+            if (age === 14)return { addMax: 1000, subMax: 500,  mulMax: 25, divMax: 25 };
+            return             { addMax: 1000, subMax: 1000, mulMax: 30, divMax: 30 };
+        }
+
+        function generateProblem(operation) {
+            const d = getDifficultyByAge();
+            let num1, num2, operator, answer;
+            switch(operation) {
+                case 'addition':
+                    num1 = getRandomNumber(1, d.addMax);
+                    num2 = getRandomNumber(1, d.addMax);
+                    operator = '+';
+                    answer = num1 + num2;
+                    break;
+                case 'subtraction':
+                    num1 = getRandomNumber(Math.floor(d.subMax / 2), d.subMax);
+                    num2 = getRandomNumber(1, num1);
+                    operator = '−';
+                    answer = num1 - num2;
+                    break;
+                case 'multiplication':
+                    num1 = getRandomNumber(1, d.mulMax);
+                    num2 = getRandomNumber(1, d.mulMax);
+                    operator = '×';
+                    answer = num1 * num2;
+                    break;
+                case 'division':
+                    num2 = getRandomNumber(2, d.divMax);
+                    answer = getRandomNumber(1, d.divMax);
+                    num1 = num2 * answer;
+                    operator = '÷';
+                    break;
+            }
+            return { num1, num2, operator, answer };
+        }
+
+        function generateProblems() {
+            const operations = getEnabledOperations();
+            problems = [];
+            for (let i = 0; i < 15; i++) {
+                const op = operations[Math.floor(Math.random() * operations.length)];
+                problems.push(generateProblem(op));
+            }
+            checked = false;
+            hideBanner();
+            renderProblems();
+        }
+
+        function renderProblems() {
+            const container = document.getElementById('problemsContainer');
+            container.innerHTML = '';
+
+            problems.forEach((problem, index) => {
+                const div = document.createElement('div');
+                div.className = `problem ${isLineFormat ? 'line-format' : 'vertical-format'}`;
+
+                if (isLineFormat) {
+                    div.innerHTML = `
+                        <div class="line-equation">
+                            <span>${problem.num1} ${problem.operator} ${problem.num2} =</span>
+                            <input class="answer-input" type="number" id="input-${index}" placeholder="?" autocomplete="off">
+                        </div>
+                        <span class="correct-answer-hint" id="hint-${index}"></span>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <div class="vertical-row vertical-top">${problem.num1}</div>
+                        <div class="vertical-row vertical-operation">
+                            <span>${problem.operator}</span>
+                            <span>${problem.num2}</span>
+                        </div>
+                        <div class="vertical-line"></div>
+                        <div class="vertical-answer">
+                            <input class="answer-input" type="number" id="input-${index}" placeholder="?" autocomplete="off">
+                            <span class="correct-answer-hint" id="hint-${index}"></span>
+                        </div>
+                    `;
+                }
+
+                container.appendChild(div);
+            });
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const cards = document.querySelectorAll('.problem');
+
+            problems.forEach((problem, index) => {
+                const input = document.getElementById(`input-${index}`);
+                const card = cards[index];
+                const userAnswer = parseInt(input.value, 10);
+
+                if (input.value === '') {
+                    input.classList.remove('correct', 'wrong');
+                    card.classList.remove('correct-border', 'wrong-border');
+                    return;
+                }
+
+                const hint = document.getElementById(`hint-${index}`) || card.querySelector('.correct-answer-hint');
+
+                if (userAnswer === problem.answer) {
+                    correct++;
+                    input.classList.add('correct');
+                    input.classList.remove('wrong');
+                    card.classList.add('correct-border');
+                    card.classList.remove('wrong-border');
+                    if (hint) hint.textContent = '';
+                } else {
+                    input.classList.add('wrong');
+                    input.classList.remove('correct');
+                    card.classList.add('wrong-border');
+                    card.classList.remove('correct-border');
+                    if (hint) hint.textContent = `✓ ${problem.answer}`;
+                }
+            });
+
+            const answered = [...problems.keys()].filter(i => document.getElementById(`input-${i}`).value !== '').length;
+            showBanner(correct, answered);
+            checked = true;
+        }
+
+        function showBanner(correct, total) {
+            const banner = document.getElementById('scoreBanner');
+            const name = document.getElementById('playerName').value.trim();
+            const pct = total === 0 ? 0 : correct / total;
+            let emoji, msg, cls;
+
+            if (total === 0) {
+                banner.className = 'score-banner show ok';
+                banner.textContent = 'Fyll inn svarene og trykk FASIT! ✏️';
+                return;
+            }
+
+            if (pct === 1)       { emoji = '🌟'; msg = 'Perfekt!';     cls = 'great'; }
+            else if (pct >= 0.7) { emoji = '👍'; msg = 'Bra jobbet!';  cls = 'ok'; }
+            else                 { emoji = '💪'; msg = 'Øv litt til!'; cls = 'poor'; }
+
+            const nameSuffix = name ? ` ${name}!` : '!';
+            banner.className = `score-banner show ${cls}`;
+            banner.textContent = `${emoji} ${correct} av ${total} riktige — ${msg.replace('!', '')}${nameSuffix}`;
+        }
+
+        function hideBanner() {
+            document.getElementById('scoreBanner').className = 'score-banner';
+        }
+
+        function toggleFormat() {
+            isLineFormat = !isLineFormat;
+            checked = false;
+            hideBanner();
+            renderProblems();
+        }
+
+        // Generate initial problems on page load
+        generateProblems();
+    </script>
+</body>
+</html>
